@@ -45,6 +45,7 @@ def printingCover(t, font, surface, x, y):
     set2 = set1.get_rect()
     set2.topleft = (x, y)
     surface.blit(set1, set2)
+    
 while True:
     for k in pygame.k.get():
         if k.type == QUIT:
@@ -93,3 +94,58 @@ while True:
     printingCover('score: %s' % (player1), font, window, 20, 50)
     printingCover('player 2', font, window, 310, 20)
     printingCover('score: %s' % (player2), font, window, 310, 50)
+    
+    for i in players:
+        pygame.draw.rect(window, blue, i)
+
+    if moveDown and p1.bottom < height:
+        p1.top += movespeed+2
+    if moveUp and p1.top > 0:
+        p1.top -= movespeed+2
+    if moveDown1 and p2.bottom < height:
+        p2.top += movespeed+2
+    if moveUp1 and p2.top > 0:
+        p2.top -= movespeed+2
+
+    if block['dir'] == downleft:
+        block['rect'].left -= movespeed
+        block['rect'].top += movespeed
+    if block['dir'] == downright:
+        block['rect'].left += movespeed
+        block['rect'].top += movespeed
+    if block['dir'] == upleft:
+        block['rect'].left -= movespeed
+        block['rect'].top -= movespeed
+    if block['dir'] == upright:
+        block['rect'].left += movespeed
+        block['rect'].top -= movespeed
+
+    if block['rect'].top < 0:
+        if block['dir'] == upleft:
+            block['dir'] = downleft
+        if block['dir'] == upright:
+            block['dir'] = downright
+    if block['rect'].bottom > height:
+        if block['dir'] == downleft:
+            block['dir'] = upleft
+        if block['dir'] == downright:
+            block['dir'] = upright
+
+    for i in players:
+        if i.colliderect(block['rect']):
+            if block['rect'].right > 520:
+                if block['dir'] == downright:
+                    block['dir'] = downleft
+                if block['dir'] == upright:
+                    block['dir'] = upleft
+            if block['rect'].left < 30:
+                if block['dir'] == downleft:
+                    block['dir'] = downright
+                if block['dir'] == upleft:
+                    block['dir'] = upright
+    
+
+    pygame.draw.rect(window, block['color'], block['rect'])
+
+    pygame.display.update()
+    time.sleep(0.02)
